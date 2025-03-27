@@ -35,18 +35,19 @@ int main(int argc, char* argv[]){
 				running = 0;
 			}
 
-		if(event.type == SDL_MOUSERBUTTONDOWN){
+		if(event.type == SDL_MOUSEBUTTONDOWN){
 			int mouseX = event.button.x; //x좌표 확인
 			int mouseY = event.button.y; //y좌표 확인
 		
-			if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && mouseY >= buttonRect.y &&mouseY <buttonRect.y + buttonRect.h){
+			if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
+				mouseY >= buttonRect.y &&mouseY <buttonRect.y + buttonRect.h){
 				showSecondScreen = !showSecondScreen; //화면전환
 			}
 		}			
 }
-
-		SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
-		SDL_RenderClear(renderer);
+		if(showSecondScreen){
+			SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
+			SDL_RenderClear(renderer);
 		
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		for(int i = 1; i < 7; i++){//메인메뉴 가로줄 6개 만드는 코드
@@ -61,9 +62,11 @@ int main(int argc, char* argv[]){
 
 		SDL_RenderPresent(renderer);
 	}
-	
-	SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
-	SDL_RenderClear(renderer);
+		else{
+			SDL_SetRenderDrawColor(renderer, 255, 205, 51, 255);
+			SDL_RenderClear(renderer);
+		}
+}
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
