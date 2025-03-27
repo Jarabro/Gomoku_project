@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, imgSurface);
 	SDL_FreeSurface(imgSurface);
 
-	SDL_Rect buttonRect = {120, 70, 520, 140}; //클릭 가능 영역
+	SDL_Rect buttonRect = {120, 70, 401, 71}; //클릭 가능 영역
 	int showSecondScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째화면)
 
 	int running = 1;
@@ -41,11 +41,11 @@ int main(int argc, char* argv[]){
 		
 			if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
 				mouseY >= buttonRect.y &&mouseY <buttonRect.y + buttonRect.h){
-				showSecondScreen = !showSecondScreen; //화면전환
+				showSecondScreen++; //화면전환
 			}
 		}			
 }
-		if(showSecondScreen){
+		if(showSecondScreen==0){
 			SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
 			SDL_RenderClear(renderer);
 		
@@ -59,13 +59,12 @@ int main(int argc, char* argv[]){
 		}
 		SDL_Rect destRect = {120, 70, 401, 71}; //이미지 크기
 		SDL_RenderCopy(renderer, texture, NULL, &destRect);
-
-		SDL_RenderPresent(renderer);
 	}
 		else{
 			SDL_SetRenderDrawColor(renderer, 255, 205, 51, 255);
 			SDL_RenderClear(renderer);
 		}
+		SDL_RenderPresent(renderer);
 }
 
 	SDL_DestroyRenderer(renderer);
