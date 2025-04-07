@@ -7,6 +7,13 @@ typedef enum{
 	STATE_GAME
 }GameState;
 
+typedef struct {
+    int x, y;
+} CirclePos;
+
+CirclePos circles[100];
+int circleCount = 0;
+
 int main(int argc, char* argv[]){
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Window *window = SDL_CreateWindow("SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
@@ -15,11 +22,21 @@ int main(int argc, char* argv[]){
 	IMG_Init(IMG_INIT_JPG); //JPG 지원 활성화
 
 	SDL_Surface* imgSurface = IMG_Load("image.jpg"); //불러올 이미지 파일
+	SDL_Texture* circleTexture = IMG_LoadTexture(renderer, "백.png");
+	SDL_Texture* circleTexture2 = IMG_LoadTexture(renderer, "흑.png");
 	if(!imgSurface) {
 
 		printf("이미지를 불러올 수 없습니다! 오류:%s\n", IMG_GetError());
 		return -1;
 	}
+	if (!circleTexture) {
+		 printf("백.png를 불러올 수 없습니다: %s\n", IMG_GetError());
+		 return -1;
+	}
+	if (!circleTexture2) {
+    printf("흑.png를 불러올 수 없습니다: %s\n", IMG_GetError());
+    return -1;
+}
 //
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, imgSurface);
 	SDL_FreeSurface(imgSurface);
@@ -27,7 +44,8 @@ int main(int argc, char* argv[]){
 	SDL_Rect buttonRect = {120, 70, 401, 71}; //시작 클릭 가능 영역
 	SDL_Rect buttonRect2 = {120, 210, 401, 211}; //설정 클릭 가능 영역
 	SDL_Rect buttonRect3 = {120, 350, 401, 351}; // 종료 클릭 가능 영역
-	int GameScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째화면)
+	SDL_Rect backButton = {0, 0, 161, 41}; //뒤로가기 클릭 가능 영
+	int GameScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째역화면)
 
 	int running = 1;
 	SDL_Event event;
@@ -41,6 +59,15 @@ int main(int argc, char* argv[]){
 			int mouseX = event.button.x; //x좌표 확인
 			int mouseY = event.button.y; //y좌표 확인
 			if(GameScreen == 0){	
+				
+				SDL_Rect dstRect;
+	    		int size = 38; // 지름 38 = 반지름 19
+ 	   			dstRect.x = mouseX - size/2;
+    			dstRect.y = mouseY - size/2;
+    			dstRect.w = size;
+    			dstRect.h = size;
+				SDL_RenderCopy(renderer, circleTexture, NULL, &dstRect);
+				
 				if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
 					mouseY >= buttonRect.y &&mouseY <= buttonRect.y + buttonRect.h){
 					GameScreen = 1; //화면전환
@@ -51,16 +78,23 @@ int main(int argc, char* argv[]){
 				}
 				if (mouseX >= buttonRect3.x && mouseX <= buttonRect3.x + buttonRect3.w &&
 					mouseY >= buttonRect3.y && mouseY <= buttonRect3.y + buttonRect3.h){
-					SDL_DestroyTexture(texture);
-					SDL_DestroyRenderer(renderer);
-					SDL_DestroyWindow(window);
-					IMG_Quit();   // SDL_image 종료
-					SDL_Quit();   // SDL 종료
-					break;
+					running = 0;
 				}
 			}
-		}			
-}
+			if(GameScreen == 1){//GameScreen 이 1일때 (게임시작화면일때)
+				if (mouseX >= backButton.x && mouseX <= backButton.x + backButton.w &&
+					mouseY >= backButton.y && mouseY <= backButton.y + backButton.h){
+					GameScreen = 0; // 메인메뉴로 돌아간다
+				}
+			}
+			if(GameScreen == 2){//GameScreen 이 2일때 (설정화면일때)
+				if (mouseX >= backButton.x && mouseX <= backButton.x + backButton.w &&
+					mouseY >= backButton.y && mouseY <= backButton.y + backButton.h){
+					GameScreen = 0; // 메인메뉴로 돌아간다
+				}
+			}
+		}				
+	}						
 		if(GameScreen==0){
 			SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
 			SDL_RenderClear(renderer);
@@ -94,17 +128,16 @@ int main(int argc, char* argv[]){
 			SDL_RenderClear(renderer);
 
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-			SDL_RenderDrawLine(renderer, 0, 40, 640, 40); // 상단 메뉴바 가로 줄
-			for(int i = 1; i < 4; i++){
-				SDL_RenderDrawLine(renderer, 1+i*160, 0, 1+i*160, 40); //상단 메뉴바 세로 줄
-			}
+			SDL_RenderDrawLine(renderer, 0, 40, 160, 40); // 상단 메뉴바 가로 줄
+			SDL_RenderDrawLine(renderer, 160, 0, 160, 40); //상단 메뉴바 세로 줄
 		}
 		SDL_RenderPresent(renderer);
 }
-
+	SDL_DestroyTexture(texture);					
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
+	IMG_Quit();   // SDL_image 종료
+	SDL_Quit();   // SDL 종료
 	return 0;
 
 }
