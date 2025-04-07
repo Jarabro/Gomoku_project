@@ -46,10 +46,13 @@ int main(int argc, char* argv[]){
 	SDL_Rect buttonRect = {120, 70, 401, 71}; //시작 클릭 가능 영역
 	SDL_Rect buttonRect2 = {120, 210, 401, 211}; //설정 클릭 가능 영역
 	SDL_Rect buttonRect3 = {120, 350, 401, 351}; // 종료 클릭 가능 영역
-	SDL_Rect backButton = {0, 0, 161, 41}; //뒤로가기 클릭 가능 영
+	SDL_Rect backButton = {0, 0, 161, 41}; //뒤로가기 클릭 가능 영역
+	SDL_Rect returnButton = {160, 0, 321, 41}; //한수무르기 클릭 가능 영역
+	SDL_Rect settingButton = {320, 0, 481, 41}; //설정가기 클릭 가능 영역
+	SDL_Rect quit = {480, 0, 640, 41}; //종료 클릭 가능 영
 	int GameScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째역화면)
 
-	int running = 1;
+	int running = 1;역
 	SDL_Event event;
 	while (running){
 		while(SDL_PollEvent(&event)){
@@ -89,6 +92,7 @@ int main(int argc, char* argv[]){
 						iswhiteturn = !iswhiteturn;
         			}
     			}
+				if (mouseX >= // 지금 한수무르기 작업중
 			}
 			if(GameScreen == 2){//GameScreen 이 2일때 (설정화면일때)
 				if (mouseX >= backButton.x && mouseX <= backButton.x + backButton.w &&
