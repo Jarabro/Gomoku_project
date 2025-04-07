@@ -63,6 +63,12 @@ int main(int argc, char* argv[]){
 		else{
 			SDL_SetRenderDrawColor(renderer, 255, 205, 51, 255);
 			SDL_RenderClear(renderer);
+
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			for(int i = 1; i< 100; i++){
+				SDL_RenderDrawLine(renderer, 1+i*20, 0, 1+i*20, 480);
+				SDL_RenderDrawLine(renderer, 0, 1+i*20, 640, 1+i*20);
+			}
 		}
 		SDL_RenderPresent(renderer);
 }
