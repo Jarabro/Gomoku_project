@@ -9,10 +9,12 @@ typedef enum{
 
 typedef struct {
     int x, y;
+	int iswhite;
 } CirclePos;
 
 CirclePos circles[100];
 int circleCount = 0;
+int iswhiteturn = 1;
 
 int main(int argc, char* argv[]){
 	SDL_Init(SDL_INIT_VIDEO);
@@ -58,16 +60,7 @@ int main(int argc, char* argv[]){
 		if(event.type == SDL_MOUSEBUTTONDOWN){
 			int mouseX = event.button.x; //x좌표 확인
 			int mouseY = event.button.y; //y좌표 확인
-			if(GameScreen == 0){	
-				
-				SDL_Rect dstRect;
-	    		int size = 38; // 지름 38 = 반지름 19
- 	   			dstRect.x = mouseX - size/2;
-    			dstRect.y = mouseY - size/2;
-    			dstRect.w = size;
-    			dstRect.h = size;
-				SDL_RenderCopy(renderer, circleTexture, NULL, &dstRect);
-				
+			if(GameScreen == 0){
 				if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
 					mouseY >= buttonRect.y &&mouseY <= buttonRect.y + buttonRect.h){
 					GameScreen = 1; //화면전환
@@ -86,6 +79,16 @@ int main(int argc, char* argv[]){
 					mouseY >= backButton.y && mouseY <= backButton.y + backButton.h){
 					GameScreen = 0; // 메인메뉴로 돌아간다
 				}
+				else {
+       			 // 게임 화면에서 클릭 시 동그라미 위치 저장
+        			if (circleCount < 100) {
+            			circles[circleCount].x = mouseX;
+            			circles[circleCount].y = mouseY;
+						circles[circleCount].iswhite = iswhiteturn;
+            			circleCount++;
+						iswhiteturn = !iswhiteturn;
+        			}
+    			}
 			}
 			if(GameScreen == 2){//GameScreen 이 2일때 (설정화면일때)
 				if (mouseX >= backButton.x && mouseX <= backButton.x + backButton.w &&
@@ -121,6 +124,21 @@ int main(int argc, char* argv[]){
 			}
 			for(int i = 1; i < 4; i++){
 				SDL_RenderDrawLine(renderer, 1+i*160, 0, 1+i*160, 480); //상단 메뉴바 줄 생성
+			}
+			// 동그라미 이미지 그리기
+			for (int i = 0; i < circleCount; i++) {
+    			SDL_Rect dstRect = {
+        		circles[i].x - 9.5,
+        		circles[i].y - 9.5,
+        		19,
+        		19
+    			};
+    			if (circles[i].iswhite) {
+        			SDL_RenderCopy(renderer, circleTexture, NULL, &dstRect);  // 백돌 이미지
+    				}
+				else {
+        			SDL_RenderCopy(renderer, circleTexture2, NULL, &dstRect);  // 흑돌 이미지
+    			}
 			}
 		}
 		else if(GameScreen==2){
