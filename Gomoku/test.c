@@ -24,28 +24,44 @@ int main(int argc, char* argv[]){
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, imgSurface);
 	SDL_FreeSurface(imgSurface);
 
-	SDL_Rect buttonRect = {120, 70, 401, 71}; //클릭 가능 영역
-	int showSecondScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째화면)
+	SDL_Rect buttonRect = {120, 70, 401, 71}; //시작 클릭 가능 영역
+	SDL_Rect buttonRect2 = {120, 210, 401, 211}; //설정 클릭 가능 영역
+	SDL_Rect buttonRect3 = {120, 350, 401, 351}; // 종료 클릭 가능 영역
+	int GameScreen = 0;	//현재 화면 상태(0 = 첫번째화면 1 = 두번째화면)
 
 	int running = 1;
 	SDL_Event event;
 	while (running){
 		while(SDL_PollEvent(&event)){
 			if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)){
-				running = 0;
+				running = 0; // 첫 번째로 뜨는 스크린 화면
 			}
 
 		if(event.type == SDL_MOUSEBUTTONDOWN){
 			int mouseX = event.button.x; //x좌표 확인
 			int mouseY = event.button.y; //y좌표 확인
-		
-			if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
-				mouseY >= buttonRect.y &&mouseY <buttonRect.y + buttonRect.h){
-				showSecondScreen++; //화면전환
+			if(GameScreen == 0){	
+				if (mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w && 
+					mouseY >= buttonRect.y &&mouseY <= buttonRect.y + buttonRect.h){
+					GameScreen = 1; //화면전환
+				}
+				if (mouseX >= buttonRect2.x && mouseX <= buttonRect2.x + buttonRect2.w &&
+					mouseY >= buttonRect2.y && mouseY <= buttonRect2.y + buttonRect2.h){
+					GameScreen = 2; //2번화면 전환
+				}
+				if (mouseX >= buttonRect3.x && mouseX <= buttonRect3.x + buttonRect3.w &&
+					mouseY >= buttonRect3.y && mouseY <= buttonRect3.y + buttonRect3.h){
+					SDL_DestroyTexture(texture);
+					SDL_DestroyRenderer(renderer);
+					SDL_DestroyWindow(window);
+					IMG_Quit();   // SDL_image 종료
+					SDL_Quit();   // SDL 종료
+					break;
+				}
 			}
 		}			
 }
-		if(showSecondScreen==0){
+		if(GameScreen==0){
 			SDL_SetRenderDrawColor(renderer, 255, 204, 51, 255);
 			SDL_RenderClear(renderer);
 		
@@ -60,14 +76,27 @@ int main(int argc, char* argv[]){
 		SDL_Rect destRect = {120, 70, 401, 71}; //이미지 크기
 		SDL_RenderCopy(renderer, texture, NULL, &destRect);
 	}
-		else{
+		else if(GameScreen==1){
 			SDL_SetRenderDrawColor(renderer, 255, 205, 51, 255);
 			SDL_RenderClear(renderer);
 
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			for(int i = 1; i< 100; i++){
-				SDL_RenderDrawLine(renderer, 1+i*20, 0, 1+i*20, 480);
-				SDL_RenderDrawLine(renderer, 0, 1+i*20, 640, 1+i*20);
+				SDL_RenderDrawLine(renderer, 1+i*20, 40, 1+i*20, 480); //99개의 가로줄 생성
+				SDL_RenderDrawLine(renderer, 0, 20+i*20, 640, 20+i*20); // 99개의 세로줄 생성
+			}
+			for(int i = 1; i < 4; i++){
+				SDL_RenderDrawLine(renderer, 1+i*160, 0, 1+i*160, 480); //상단 메뉴바 줄 생성
+			}
+		}
+		else if(GameScreen==2){
+			SDL_SetRenderDrawColor(renderer, 255, 205, 51, 255);	
+			SDL_RenderClear(renderer);
+
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderDrawLine(renderer, 0, 40, 640, 40); // 상단 메뉴바 가로 줄
+			for(int i = 1; i < 4; i++){
+				SDL_RenderDrawLine(renderer, 1+i*160, 0, 1+i*160, 40); //상단 메뉴바 세로 줄
 			}
 		}
 		SDL_RenderPresent(renderer);
